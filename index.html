@@ -11,102 +11,107 @@
 
         :root { --gold: #f1c40f; --dark-bg: #1a1a1a; --panel-bg: rgba(20, 20, 20, 0.95); --green: #27ae60; --red: #c0392b; }
 
-        /* --- BARRA LATERAL --- */
-        .sidebar { width: 340px; background-color: var(--dark-bg); padding: 20px; display: flex; flex-direction: column; gap: 15px; z-index: 100; box-shadow: 5px 0 20px rgba(0,0,0,1); border-right: 2px solid #333; }
-        .panel { background: var(--panel-bg); border: 1px solid #333; border-left: 4px solid var(--gold); border-radius: 5px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
-        .panel h3 { color: var(--gold); font-size: 13px; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px;}
+        /* --- BARRA LATERAL (REDIMENSIONADA PARA MELHOR PERFORMANCE) --- */
+        .sidebar { width: 280px; background-color: var(--dark-bg); padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; box-shadow: 5px 0 20px rgba(0,0,0,1); border-right: 2px solid #333; }
+        .panel { background: var(--panel-bg); border: 1px solid #333; border-left: 4px solid var(--gold); border-radius: 5px; padding: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        .panel h3 { color: var(--gold); font-size: 12px; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;}
         
-        .avatar-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .avatar-icon { font-size: 24px; background: #2c3e50; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border-radius: 10px; border: 2px solid var(--gold); overflow: hidden; }
+        .avatar-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .avatar-icon { font-size: 20px; background: #2c3e50; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 10px; border: 2px solid var(--gold); overflow: hidden; }
         .avatar-icon img { width: 100%; height: 100%; object-fit: cover; }
-        .avatar-info { flex: 1; font-size: 12px; }
+        .avatar-info { flex: 1; font-size: 11px; }
         .progress-bar { width: 100%; height: 6px; background: #333; border-radius: 3px; margin-top: 5px; overflow: hidden; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #f1c40f, #f39c12); width: 0%; transition: width 1s; }
 
-        .controls { display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
-        .controls input, .controls select, .controls button { padding: 10px; border-radius: 5px; border: 1px solid #444; background: #222; color: white; font-size: 14px; }
+        .controls { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+        .controls input, .controls select, .controls button { padding: 8px; border-radius: 5px; border: 1px solid #444; background: #222; color: white; font-size: 12px; }
         .controls button { background: var(--gold); border: none; color: #000; font-weight: bold; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
         .controls button:hover { background: #f39c12; transform: scale(1.02); }
 
-        /* --- VIEWPORT DO MAPA (TELA CHEIA) --- */
-        .map-viewport { flex: 1; position: relative; overflow: hidden; background-color: #111; }
-
-        /* CONTAINER DO MAPA DINÂMICO */
-        .map-content {
-            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-            background-image: url('https://i.postimg.cc/Nfsx9QGF/paisagem-de-zona-de-guerra-com-destruicao-apocaliptica-23-2150985648.avif');
-            background-color: #222;
-            background-size: 100% 100%; background-repeat: no-repeat; background-position: center;
-            transition: background-image 1s ease-in-out;
+        /* --- RESPONSIVIDADE PARA TELAS MENORES (CELULARES E TABLETS) --- */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: 35vh; border-right: none; border-bottom: 2px solid #333; flex-direction: row; flex-wrap: wrap; overflow-y: auto; padding: 10px;}
+            .panel { flex: 1; min-width: 150px; }
+            .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-end; }
+            .controls > * { flex: 1; min-width: 120px; }
+            .map-viewport { height: 65vh; }
         }
 
-        /* BANNER FLUTUANTE INFORMATIVO */
-        .floating-banner { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); border: 2px solid var(--gold); padding: 10px 30px; border-radius: 30px; text-align: center; z-index: 200; backdrop-filter: blur(5px); transition: all 0.5s;}
-        .floating-banner h1 { font-size: 18px; color: white; margin-bottom: 2px; text-transform: uppercase;}
-        .floating-banner p { font-size: 12px; color: var(--gold); font-weight: bold;}
+        /* --- VIEWPORT DO MAPA --- */
+        .map-viewport { flex: 1; position: relative; overflow: hidden; background-color: #111; }
+        .map-content { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background-image: url('https://i.postimg.cc/Nfsx9QGF/paisagem-de-zona-de-guerra-com-destruicao-apocaliptica-23-2150985648.avif'); background-color: #222; background-size: 100% 100%; background-repeat: no-repeat; background-position: center; transition: background-image 1s ease-in-out; }
 
-        /* --- BARRA DE TEMPO DE TROCA DE TELA --- */
+        .floating-banner { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); border: 2px solid var(--gold); padding: 10px 30px; border-radius: 30px; text-align: center; z-index: 200; backdrop-filter: blur(5px); transition: all 0.5s;}
+        .floating-banner h1 { font-size: 16px; color: white; margin-bottom: 2px; text-transform: uppercase;}
+        .floating-banner p { font-size: 11px; color: var(--gold); font-weight: bold;}
         .screen-timer { position: absolute; bottom: 0; left: 0; height: 5px; background: var(--gold); width: 0%; transition: width 1s linear; z-index: 300; }
 
-        /* --- ELEMENTOS DO MAPA --- */
         .svg-path { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        
         .node { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; transition: all 0.5s; }
         .node-icon { font-size: 35px; background: rgba(20,20,20,0.8); width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 50%; border: 3px solid #7f8c8d; box-shadow: 0 5px 15px rgba(0,0,0,0.9); transition: all 0.5s;}
         .node-label { background: rgba(0,0,0,0.9); padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; margin-top: 8px; border: 1px solid #7f8c8d; white-space: nowrap; pointer-events: none; }
-        
         .node.castle .node-icon { border: 4px solid var(--gold); background: rgba(241, 196, 15, 0.4); font-size: 50px; box-shadow: 0 0 20px var(--gold); width: 90px; height: 90px;}
 
-        /* --- PLACAS DE AVISO --- */
-        .warning-sign {
-            position: absolute;
-            transform: translate(-50%, -50%);
-            z-index: 8;
-            background: rgba(0, 0, 0, 0.85);
-            border: 1px solid #7f8c8d;
-            border-left: 3px solid var(--red);
-            color: #ecf0f1;
-            padding: 6px;
-            border-radius: 4px;
-            font-size: 9px;
-            font-weight: bold;
-            text-align: center;
-            width: 100px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
-            pointer-events: none;
-        }
-        .warning-sign span {
-            display: block;
-            color: var(--gold);
-            font-size: 10px;
-            margin-bottom: 3px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 2px;
-        }
+        .warning-sign { position: absolute; transform: translate(-50%, -50%); z-index: 8; background: rgba(0, 0, 0, 0.85); border: 1px solid #7f8c8d; border-left: 3px solid var(--red); color: #ecf0f1; padding: 6px; border-radius: 4px; font-size: 9px; font-weight: bold; text-align: center; width: 100px; box-shadow: 0 4px 10px rgba(0,0,0,0.8); pointer-events: none; }
+        .warning-sign span { display: block; color: var(--gold); font-size: 10px; margin-bottom: 3px; border-bottom: 1px solid #333; padding-bottom: 2px; }
 
-        /* AVATARES DOS COLABORADORES */
         .player-token { position: absolute; transform: translate(-50%, -100%); z-index: 15; transition: all 1.5s ease-in-out; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .player-token:hover { z-index: 50; }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-        
-        .player-token .icon { 
-            font-size: 45px; background: #fff; width: 70px; height: 70px; border-radius: 50%; 
-            border: 4px solid var(--green); display: flex; justify-content: center; align-items: center; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.9); animation: float 3s ease-in-out infinite; overflow: hidden; 
-        }
+        .player-token .icon { font-size: 45px; background: #fff; width: 70px; height: 70px; border-radius: 50%; border: 4px solid var(--green); display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.9); animation: float 3s ease-in-out infinite; overflow: hidden; }
         .player-token .icon img { width: 100%; height: 100%; object-fit: cover; }
         .player-token .bubble { background: white; color: black; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 10px; border: 2px solid black; margin-bottom: 5px; white-space: nowrap; pointer-events: none; text-align: center;}
 
         #tooltip { position: fixed; display: none; background: rgba(15, 20, 25, 0.95); border: 1px solid var(--gold); padding: 15px; border-radius: 8px; color: white; font-size: 13px; z-index: 1000; pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,0.9); min-width: 150px; }
         #tooltip h4 { color: var(--gold); margin-bottom: 5px; font-size: 14px;}
         #tooltip hr { border-color: #444; margin: 8px 0; }
+        #loader { text-align:center; color: var(--gold); font-size: 11px; margin-top: 10px; font-weight: bold; background: #222; padding: 5px; border-radius: 5px; display: none;}
+
+        /* =========================================================
+           TELA DE COMEMORAÇÃO E VOO (LEVEL UP 1K)
+        ========================================================= */
+        #level-up-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85); z-index: 9999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            backdrop-filter: blur(8px);
+        }
         
-        #loader { text-align:center; color: var(--gold); font-size: 12px; margin-top: 10px; font-weight: bold; background: #222; padding: 5px; border-radius: 5px; display: none;}
-        .error-msg { color: #e74c3c !important; border: 1px solid #e74c3c; }
-        .success-msg { color: #2ecc71 !important; }
+        /* O Container da Foto que vai decolar */
+        .level-up-avatar-container {
+            font-size: 120px; background: #fff; width: 300px; height: 300px; border-radius: 50%;
+            border: 15px solid var(--green); display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 100px rgba(46, 204, 113, 0.8), 0 20px 50px rgba(0,0,0,1); overflow: hidden;
+            /* Animação que aumenta, fica e depois voa embora inclinando como avião */
+            animation: decolagemAviator 5s forwards cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .level-up-avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .level-up-text {
+            color: var(--gold); font-size: 40px; margin-top: 30px; text-transform: uppercase;
+            font-weight: bold; text-shadow: 0 5px 15px rgba(0,0,0,1); text-align: center;
+            animation: fadeIn 1s forwards; max-width: 90%;
+        }
+
+        @keyframes decolagemAviator {
+            0% { transform: scale(0.1) translateY(800px); opacity: 0; }
+            15% { transform: scale(1.1) translateY(-20px); opacity: 1; }
+            25% { transform: scale(1) translateY(0); opacity: 1; }
+            70% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
+            /* Decola igual avião */
+            100% { transform: scale(0.4) translateY(-1500px) translateX(800px) rotate(45deg); opacity: 0; }
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
+
+    <!-- OVERLAY DE COMEMORAÇÃO (FICA INVISÍVEL ATÉ BATER 1K) -->
+    <div id="level-up-overlay">
+        <div id="level-up-icon" class="level-up-avatar-container"></div>
+        <div id="level-up-name" class="level-up-text"></div>
+    </div>
 
     <aside class="sidebar">
         <div class="panel" style="flex: 1; display: flex; flex-direction: column;">
@@ -114,9 +119,9 @@
             <div id="avatar-list" style="overflow-y: auto; flex: 1; padding-right: 5px;"></div>
         </div>
 
-        <div class="panel">
+        <div class="panel" style="height: auto;">
             <h3>📈 Somatório da Equipe</h3>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; color: #bdc3c7;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 11px; color: #bdc3c7;">
                 <span>Vendido Hoje:</span>
                 <span id="score-team-txt" style="color: var(--gold); font-weight: bold;">0 PTS</span>
             </div>
@@ -184,6 +189,17 @@
     let faseExibicaoAtual = 1; 
     let maxFaseAlcancada = 1;
     let timerLoop = 0;
+    
+    // MEMÓRIA DE FASE PARA DISPARAR ANIMAÇÃO
+    let fasesAnteriores = {}; 
+    let primeiroCarregamento = true;
+
+    // --- SONS ---
+    // Usando sons genéricos gratuitos direto da web
+    const somPalmas = new Audio('https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg');
+    const somAviao = new Audio('https://actions.google.com/sounds/v1/transportation/airplane_flyby.ogg');
+    somPalmas.volume = 0.6;
+    somAviao.volume = 1.0;
 
     const tooltip = document.getElementById('tooltip');
     function showTooltip(e, titulo, descricao) {
@@ -206,7 +222,6 @@
         }
     }
 
-    // --- LÓGICA DE DADOS (AGORA PUXANDO APENAS VALORES DE HOJE E ARREDONDANDO) ---
     async function carregarDadosDoServidor() {
         const loader = document.getElementById('loader');
         loader.style.display = 'block';
@@ -214,10 +229,10 @@
         if(API_URL === "SUA_URL_AQUI" || API_URL.trim() === "") {
             loader.className = 'error-msg'; loader.innerText = "COLE SUA API_URL NO CÓDIGO!";
             
-            // Dados Mockados apenas para visualização se não tiver API
+            // Dados Mockados de teste se não tiver URL
             jogadores = [
                 { nome: "SILVA", avatar: "🪖", pontosTotais: 350 }, 
-                { nome: "SANTOS", avatar: mapaAvatares["SANTOS"], pontosTotais: 1400 } 
+                { nome: "SANTOS", avatar: mapaAvatares["SANTOS"], pontosTotais: 950 } 
             ];
             processarEstatisticasEquipe();
             return;
@@ -233,23 +248,17 @@
             const vendas = jsonResposta.vendasHoje || [];
             
             let somaVendedoresTemp = {};
-            
-            // PEGA A DATA DE HOJE
             let dataHojeLocal = new Date();
             dataHojeLocal.setHours(0,0,0,0);
             
             vendas.forEach(venda => {
                 let nome = venda[0] ? venda[0].toString().toUpperCase().trim() : null;
-                
-                // PUXA OS VALORES INTEIROS (Sem centavos. Ex: 599,90 -> 599)
                 let valor = Math.floor(parseFloat(venda[1]) || 0); 
-                
                 let dataVendaStr = venda[2] ? venda[2].toString().trim() : "";
                 
-                if(!nome || valor <= 0) return; // Ignora linhas em branco ou vazias
+                if(!nome || valor <= 0) return; 
 
-                // CONVERSOR DE DATAS PARA COMPARAÇÃO
-                let dataVendaObj = new Date(0); // Data antiga caso dê erro
+                let dataVendaObj = new Date(0);
                 if(dataVendaStr !== "") {
                     if (dataVendaStr.includes('/')) {
                         let partes = dataVendaStr.split('/');
@@ -262,7 +271,6 @@
                 }
                 dataVendaObj.setHours(0,0,0,0);
                 
-                // VERIFICA SE A DATA DA VENDA É IGUAL OU MAIOR QUE A DATA DE HOJE
                 if(dataVendaObj.getTime() >= dataHojeLocal.getTime()) {
                     if(!somaVendedoresTemp[nome]) somaVendedoresTemp[nome] = 0;
                     somaVendedoresTemp[nome] += valor;
@@ -284,7 +292,6 @@
             loader.className = 'error-msg'; loader.innerText = "ERRO: Verifique a conexão.";
         } finally {
             processarEstatisticasEquipe();
-            // Some com a notificação após 3 segundos
             setTimeout(() => { loader.style.display = 'none'; }, 3000);
         }
     }
@@ -296,9 +303,46 @@
             jog.fase = f;
             jog.pontosNaFaseAtual = jog.pontosTotais - ((f.toFixed(0) - 1) * TAMANHO_FASE);
             if(f > maxFaseAlcancada) maxFaseAlcancada = f;
+
+            // DETECTA SE O JOGADOR SUBIU DE FASE! (Animação de 1K)
+            if(!primeiroCarregamento && fasesAnteriores[jog.nome] && f > fasesAnteriores[jog.nome]) {
+                dispararAnimacaoAvanco(jog);
+            }
+            // Guarda na memória a fase dele
+            fasesAnteriores[jog.nome] = f;
         });
+
+        primeiroCarregamento = false;
+
         atualizarPainelLateral();
         renderizarMapaAtual();
+    }
+
+    // --- FUNÇÃO DO SHOW DO MILHÃO (AVIÃO E APLAUSOS) ---
+    function dispararAnimacaoAvanco(jogador) {
+        const overlay = document.getElementById('level-up-overlay');
+        document.getElementById('level-up-icon').innerHTML = jogador.avatar;
+        document.getElementById('level-up-name').innerHTML = `${jogador.nome} BATEU 1K E AVANÇOU!<br>R$ 20 GARANTIDO!`;
+        
+        // Reseta animações
+        overlay.style.display = 'none';
+        overlay.offsetHeight; 
+        overlay.style.display = 'flex';
+
+        // Toca Palmas imediatamente
+        somPalmas.currentTime = 0;
+        somPalmas.play();
+
+        // Toca Avião 1 segundo depois (no momento que a foto vai decolar)
+        setTimeout(() => {
+            somAviao.currentTime = 0;
+            somAviao.play();
+        }, 1500);
+
+        // Esconde a tela depois de 5.5 segundos (quando o avião já sumiu)
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 5500);
     }
 
     function atualizarPainelLateral() {
@@ -336,7 +380,7 @@
         mapContent.style.backgroundImage = tema.bg;
         document.getElementById('banner-title').innerText = `${tema.titulo} (FASE ${faseExibicaoAtual})`;
 
-        // Desenha Marcos Principais
+        // Desenha Marcos
         tema.nos.forEach((noConfig, index) => {
             const pos = caminhoBase[index];
             const isCastle = index === 5; 
@@ -397,7 +441,18 @@
         if (!nome || isNaN(valor) || valor <= 0) { alert("Preencha o nome e um valor válido!"); return; }
 
         mapaAvatares[nome] = avatar;
-        if(API_URL === "SUA_URL_AQUI") { alert("Configure a API_URL para salvar as vendas."); return; }
+        
+        // MOCK DE TESTE PARA VOCÊ VER A ANIMAÇÃO (se estiver sem API)
+        if(API_URL === "SUA_URL_AQUI") { 
+            let j = jogadores.find(x => x.nome === nome);
+            if(j) j.pontosTotais += valor;
+            else jogadores.push({nome: nome, avatar: avatar, pontosTotais: valor});
+            
+            // Simula o recarregamento
+            document.getElementById('valorVenda').value = '';
+            processarEstatisticasEquipe();
+            return; 
+        }
 
         const loader = document.getElementById('loader');
         loader.style.display = 'block';
@@ -405,7 +460,6 @@
         try {
             await fetch(API_URL, { method: "POST", body: JSON.stringify({ vendedor: nome, valor: valor }) });
             document.getElementById('valorVenda').value = '';
-            // Recarrega todos os dados
             carregarDadosDoServidor(); 
         } catch(e) {
             alert("Erro ao gravar venda.");
@@ -416,7 +470,6 @@
     window.onload = () => {
         renderizarMapaAtual(); 
         carregarDadosDoServidor(); 
-        // REMOVIDA A ATUALIZAÇÃO AUTOMÁTICA EM BACKGROUND CONFORME SOLICITADO
     };
 
 </script>

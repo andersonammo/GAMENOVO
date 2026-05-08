@@ -11,7 +11,7 @@
 
         :root { --gold: #f1c40f; --dark-bg: #1a1a1a; --panel-bg: rgba(20, 20, 20, 0.95); --green: #27ae60; --red: #c0392b; }
 
-        /* --- BARRA LATERAL (REDIMENSIONADA PARA MELHOR PERFORMANCE) --- */
+        /* --- BARRA LATERAL --- */
         .sidebar { width: 280px; background-color: var(--dark-bg); padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; box-shadow: 5px 0 20px rgba(0,0,0,1); border-right: 2px solid #333; }
         .panel { background: var(--panel-bg); border: 1px solid #333; border-left: 4px solid var(--gold); border-radius: 5px; padding: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
         .panel h3 { color: var(--gold); font-size: 12px; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;}
@@ -28,7 +28,7 @@
         .controls button { background: var(--gold); border: none; color: #000; font-weight: bold; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
         .controls button:hover { background: #f39c12; transform: scale(1.02); }
 
-        /* --- RESPONSIVIDADE PARA TELAS MENORES (CELULARES E TABLETS) --- */
+        /* --- RESPONSIVIDADE PARA TELAS MENORES --- */
         @media (max-width: 768px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; height: 35vh; border-right: none; border-bottom: 2px solid #333; flex-direction: row; flex-wrap: wrap; overflow-y: auto; padding: 10px;}
@@ -69,7 +69,7 @@
         #loader { text-align:center; color: var(--gold); font-size: 11px; margin-top: 10px; font-weight: bold; background: #222; padding: 5px; border-radius: 5px; display: none;}
 
         /* =========================================================
-           TELA DE COMEMORAÇÃO E VOO (LEVEL UP 1K)
+           TELA DE COMEMORAÇÃO EXTREMA (SHOW DO MILHÃO)
         ========================================================= */
         #level-up-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -78,20 +78,16 @@
             backdrop-filter: blur(8px);
         }
         
-        /* O Container da Foto que vai decolar */
         .level-up-avatar-container {
             font-size: 120px; background: #fff; width: 300px; height: 300px; border-radius: 50%;
             border: 15px solid var(--green); display: flex; justify-content: center; align-items: center;
             box-shadow: 0 0 100px rgba(46, 204, 113, 0.8), 0 20px 50px rgba(0,0,0,1); overflow: hidden;
-            /* Animação que aumenta, fica e depois voa embora inclinando como avião */
-            animation: decolagemAviator 5s forwards cubic-bezier(0.25, 1, 0.5, 1);
         }
         .level-up-avatar-container img { width: 100%; height: 100%; object-fit: cover; }
         
         .level-up-text {
             color: var(--gold); font-size: 40px; margin-top: 30px; text-transform: uppercase;
-            font-weight: bold; text-shadow: 0 5px 15px rgba(0,0,0,1); text-align: center;
-            animation: fadeIn 1s forwards; max-width: 90%;
+            font-weight: bold; text-shadow: 0 5px 15px rgba(0,0,0,1); text-align: center; max-width: 90%;
         }
 
         @keyframes decolagemAviator {
@@ -99,7 +95,6 @@
             15% { transform: scale(1.1) translateY(-20px); opacity: 1; }
             25% { transform: scale(1) translateY(0); opacity: 1; }
             70% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
-            /* Decola igual avião */
             100% { transform: scale(0.4) translateY(-1500px) translateX(800px) rotate(45deg); opacity: 0; }
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -165,6 +160,7 @@
     // =====================================================================
 
     const TAMANHO_FASE = 1000;
+    const DATA_INICIO_TEMPORADA = new Date(2026, 4, 1);
 
     const PLACAS_AVISO = [
         { pts: 100, texto: "CORRE ATRÁS DE PROSPECTAR CLIENTES." },
@@ -190,17 +186,17 @@
     let maxFaseAlcancada = 1;
     let timerLoop = 0;
     
-    // MEMÓRIA DE FASE PARA DISPARAR ANIMAÇÃO
-    let fasesAnteriores = {}; 
+    // VARIÁVEIS DO GATILHO DA ANIMAÇÃO
+    let marcosAnteriores = {}; 
     let primeiroCarregamento = true;
 
-    // --- SONS ---
-    // Usando sons genéricos gratuitos direto da web
+    // --- CARREGAMENTO DE ÁUDIO COM PRE-LOAD ---
     const somPalmas = new Audio('https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg');
     const somAviao = new Audio('https://actions.google.com/sounds/v1/transportation/airplane_flyby.ogg');
     somPalmas.volume = 0.6;
     somAviao.volume = 1.0;
 
+    // --- TOOLTIP ---
     const tooltip = document.getElementById('tooltip');
     function showTooltip(e, titulo, descricao) {
         let safeDescricao = descricao.replace(/<img[^>]*>/g, "📸 Foto ");
@@ -222,6 +218,42 @@
         }
     }
 
+    // --- FUNÇÃO DO SHOW DO MILHÃO (EXPLOSÃO E VOO) ---
+    function dispararAnimacaoAvanco(jogador) {
+        const overlay = document.getElementById('level-up-overlay');
+        const iconContainer = document.getElementById('level-up-icon');
+        const textContainer = document.getElementById('level-up-name');
+
+        // Reseta fisicamente as animações do CSS para garantir que rodem do zero
+        iconContainer.style.animation = 'none';
+        textContainer.style.animation = 'none';
+        overlay.style.display = 'none';
+        overlay.offsetHeight; /* Força o navegador a recalcular a tela */
+
+        // Preenche com os dados de quem bateu a meta
+        iconContainer.innerHTML = jogador.avatar;
+        textContainer.innerHTML = `${jogador.nome} BATEU 1K E AVANÇOU!<br>🎉 R$ 20 GARANTIDO!`;
+        
+        // Exibe a tela preta e adiciona o efeito de animação nas tags
+        overlay.style.display = 'flex';
+        iconContainer.style.animation = 'decolagemAviator 5s forwards cubic-bezier(0.25, 1, 0.5, 1)';
+        textContainer.style.animation = 'fadeIn 1s forwards';
+
+        // Toca os sons (com .catch para ignorar se o navegador bloquear o áudio)
+        somPalmas.currentTime = 0;
+        somPalmas.play().catch(e => console.log('Áudio palmas bloqueado pelo navegador', e));
+
+        setTimeout(() => {
+            somAviao.currentTime = 0;
+            somAviao.play().catch(e => console.log('Áudio avião bloqueado pelo navegador', e));
+        }, 1500);
+
+        // Desliga a tela preta depois que o avião sai voando
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 5500);
+    }
+
     async function carregarDadosDoServidor() {
         const loader = document.getElementById('loader');
         loader.style.display = 'block';
@@ -229,10 +261,10 @@
         if(API_URL === "SUA_URL_AQUI" || API_URL.trim() === "") {
             loader.className = 'error-msg'; loader.innerText = "COLE SUA API_URL NO CÓDIGO!";
             
-            // Dados Mockados de teste se não tiver URL
+            // DADOS DE TESTE 
             jogadores = [
                 { nome: "SILVA", avatar: "🪖", pontosTotais: 350 }, 
-                { nome: "SANTOS", avatar: mapaAvatares["SANTOS"], pontosTotais: 950 } 
+                { nome: "SANTOS", avatar: mapaAvatares["SANTOS"], pontosTotais: 950 } // Está com 950. Lance +50 para testar a explosão!
             ];
             processarEstatisticasEquipe();
             return;
@@ -246,8 +278,8 @@
             
             const jsonResposta = await response.json();
             const vendas = jsonResposta.vendasHoje || [];
-            
             let somaVendedoresTemp = {};
+            
             let dataHojeLocal = new Date();
             dataHojeLocal.setHours(0,0,0,0);
             
@@ -299,50 +331,28 @@
     function processarEstatisticasEquipe() {
         maxFaseAlcancada = 1;
         jogadores.forEach(jog => {
+            // A fase matemática para posicionar (1000 = fase 1)
             let f = Math.floor(Math.max(0, jog.pontosTotais - 0.01) / TAMANHO_FASE) + 1;
             jog.fase = f;
-            jog.pontosNaFaseAtual = jog.pontosTotais - ((f.toFixed(0) - 1) * TAMANHO_FASE);
+            jog.pontosNaFaseAtual = jog.pontosTotais - ((f - 1) * TAMANHO_FASE);
             if(f > maxFaseAlcancada) maxFaseAlcancada = f;
 
-            // DETECTA SE O JOGADOR SUBIU DE FASE! (Animação de 1K)
-            if(!primeiroCarregamento && fasesAnteriores[jog.nome] && f > fasesAnteriores[jog.nome]) {
+            // O Gatilho da Animação: Quantas vezes exatas ele bateu os múltiplos de 1000?
+            let marcosBateu = Math.floor(jog.pontosTotais / TAMANHO_FASE); 
+            
+            // Dispara a explosão somente se ele passou para um marco novo agora e não é o 1º carregamento
+            if(!primeiroCarregamento && marcosAnteriores[jog.nome] !== undefined && marcosBateu > marcosAnteriores[jog.nome]) {
                 dispararAnimacaoAvanco(jog);
             }
-            // Guarda na memória a fase dele
-            fasesAnteriores[jog.nome] = f;
+            
+            // Atualiza a memória
+            marcosAnteriores[jog.nome] = marcosBateu;
         });
 
         primeiroCarregamento = false;
 
         atualizarPainelLateral();
         renderizarMapaAtual();
-    }
-
-    // --- FUNÇÃO DO SHOW DO MILHÃO (AVIÃO E APLAUSOS) ---
-    function dispararAnimacaoAvanco(jogador) {
-        const overlay = document.getElementById('level-up-overlay');
-        document.getElementById('level-up-icon').innerHTML = jogador.avatar;
-        document.getElementById('level-up-name').innerHTML = `${jogador.nome} BATEU 1K E AVANÇOU!<br>R$ 20 GARANTIDO!`;
-        
-        // Reseta animações
-        overlay.style.display = 'none';
-        overlay.offsetHeight; 
-        overlay.style.display = 'flex';
-
-        // Toca Palmas imediatamente
-        somPalmas.currentTime = 0;
-        somPalmas.play();
-
-        // Toca Avião 1 segundo depois (no momento que a foto vai decolar)
-        setTimeout(() => {
-            somAviao.currentTime = 0;
-            somAviao.play();
-        }, 1500);
-
-        // Esconde a tela depois de 5.5 segundos (quando o avião já sumiu)
-        setTimeout(() => {
-            overlay.style.display = 'none';
-        }, 5500);
     }
 
     function atualizarPainelLateral() {
@@ -353,7 +363,9 @@
         jogadores.sort((a,b) => b.pontosTotais - a.pontosTotais).forEach(jog => {
             equipeTotal += jog.pontosTotais;
             let progressoPercent = Math.min((jog.pontosNaFaseAtual / TAMANHO_FASE) * 100, 100);
-            let recompensasPagas = (jog.fase - 1) * 20;
+            
+            // Calcula o dinheiro real: quantas vezes completas (múltiplos de 1000) ele bateu
+            let recompensasPagas = Math.floor(jog.pontosTotais / TAMANHO_FASE) * 20;
 
             lista.innerHTML += `
                 <div class="avatar-item" onmouseenter="showTooltip(event, '${jog.nome}', 'Total Geral (Hoje): ${jog.pontosTotais} PTS<br>Recompensa Acumulada: <b>R$ ${recompensasPagas},00</b><br><br>Faltam: ${TAMANHO_FASE - jog.pontosNaFaseAtual} pts p/ próxima meta')" onmouseleave="hideTooltip()">
@@ -380,7 +392,7 @@
         mapContent.style.backgroundImage = tema.bg;
         document.getElementById('banner-title').innerText = `${tema.titulo} (FASE ${faseExibicaoAtual})`;
 
-        // Desenha Marcos
+        // Desenha Marcos Principais
         tema.nos.forEach((noConfig, index) => {
             const pos = caminhoBase[index];
             const isCastle = index === 5; 
@@ -442,13 +454,12 @@
 
         mapaAvatares[nome] = avatar;
         
-        // MOCK DE TESTE PARA VOCÊ VER A ANIMAÇÃO (se estiver sem API)
+        // MOCK DE TESTE PARA ANIMAÇÃO SE ESTIVER SEM API
         if(API_URL === "SUA_URL_AQUI") { 
             let j = jogadores.find(x => x.nome === nome);
             if(j) j.pontosTotais += valor;
             else jogadores.push({nome: nome, avatar: avatar, pontosTotais: valor});
             
-            // Simula o recarregamento
             document.getElementById('valorVenda').value = '';
             processarEstatisticasEquipe();
             return; 
@@ -466,7 +477,7 @@
         }
     }
 
-    // Inicialização ao abrir a página
+    // Inicialização
     window.onload = () => {
         renderizarMapaAtual(); 
         carregarDadosDoServidor(); 

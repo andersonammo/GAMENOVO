@@ -11,8 +11,10 @@
 
         :root { --gold: #f1c40f; --dark-bg: #1a1a1a; --panel-bg: rgba(20, 20, 20, 0.95); --green: #27ae60; --red: #c0392b; }
 
-        /* --- BARRA LATERAL --- */
-        .sidebar { width: 280px; background-color: var(--dark-bg); padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; box-shadow: 5px 0 20px rgba(0,0,0,1); border-right: 2px solid #333; }
+        /* --- BARRA LATERAL COM RECOLHIMENTO --- */
+        .sidebar { width: 280px; flex-shrink: 0; background-color: var(--dark-bg); padding: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 100; box-shadow: 5px 0 20px rgba(0,0,0,1); border-right: 2px solid #333; transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .sidebar.collapsed { margin-left: -280px; }
+        
         .panel { background: var(--panel-bg); border: 1px solid #333; border-left: 4px solid var(--gold); border-radius: 5px; padding: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
         .panel h3 { color: var(--gold); font-size: 12px; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;}
         
@@ -23,18 +25,12 @@
         .progress-bar { width: 100%; height: 6px; background: #333; border-radius: 3px; margin-top: 5px; overflow: hidden; }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #f1c40f, #f39c12); width: 0%; transition: width 1s; }
 
-        .controls { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
-        .controls input, .controls select, .controls button { padding: 8px; border-radius: 5px; border: 1px solid #444; background: #222; color: white; font-size: 12px; }
-        .controls button { background: var(--gold); border: none; color: #000; font-weight: bold; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-        .controls button:hover { background: #f39c12; transform: scale(1.02); }
-
         /* --- RESPONSIVIDADE PARA TELAS MENORES --- */
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar { width: 100%; height: 35vh; border-right: none; border-bottom: 2px solid #333; flex-direction: row; flex-wrap: wrap; overflow-y: auto; padding: 10px;}
+            .sidebar { width: 100%; height: 35vh; border-right: none; border-bottom: 2px solid #333; flex-direction: row; flex-wrap: wrap; overflow-y: auto; transition: margin-top 0.4s ease; }
+            .sidebar.collapsed { margin-left: 0; margin-top: -35vh; }
             .panel { flex: 1; min-width: 150px; }
-            .controls { flex-direction: row; flex-wrap: wrap; align-items: flex-end; }
-            .controls > * { flex: 1; min-width: 120px; }
             .map-viewport { height: 65vh; }
         }
 
@@ -42,49 +38,52 @@
         .map-viewport { flex: 1; position: relative; overflow: hidden; background-color: #111; }
         .map-content { position: absolute; width: 100%; height: 100%; top: 0; left: 0; background-image: url('https://i.postimg.cc/Nfsx9QGF/paisagem-de-zona-de-guerra-com-destruicao-apocaliptica-23-2150985648.avif'); background-color: #222; background-size: 100% 100%; background-repeat: no-repeat; background-position: center; transition: background-image 1s ease-in-out; }
 
+        .btn-toggle { position: absolute; top: 20px; left: 20px; z-index: 90; background: rgba(0,0,0,0.8); border: 2px solid var(--gold); color: var(--gold); padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.8); transition: 0.2s; }
+        .btn-toggle:hover { background: var(--gold); color: #000; }
+
         .floating-banner { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); border: 2px solid var(--gold); padding: 10px 30px; border-radius: 30px; text-align: center; z-index: 200; backdrop-filter: blur(5px); transition: all 0.5s;}
         .floating-banner h1 { font-size: 16px; color: white; margin-bottom: 2px; text-transform: uppercase;}
         .floating-banner p { font-size: 11px; color: var(--gold); font-weight: bold;}
         .screen-timer { position: absolute; bottom: 0; left: 0; height: 5px; background: var(--gold); width: 0%; transition: width 1s linear; z-index: 300; }
 
-        .svg-path { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        /* SVG PATH STYLING */
+        .svg-path { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+        
+        /* NODES (BASES) REDUZIDAS */
         .node { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; transition: all 0.5s; }
-        .node-icon { font-size: 35px; background: rgba(20,20,20,0.8); width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; border-radius: 50%; border: 3px solid #7f8c8d; box-shadow: 0 5px 15px rgba(0,0,0,0.9); transition: all 0.5s;}
-        .node-label { background: rgba(0,0,0,0.9); padding: 4px 10px; border-radius: 5px; font-size: 11px; font-weight: bold; margin-top: 8px; border: 1px solid #7f8c8d; white-space: nowrap; pointer-events: none; }
-        .node.castle .node-icon { border: 4px solid var(--gold); background: rgba(241, 196, 15, 0.4); font-size: 50px; box-shadow: 0 0 20px var(--gold); width: 90px; height: 90px;}
+        .node-icon { font-size: 24px; background: rgba(20,20,20,0.8); width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border-radius: 50%; border: 2px solid #7f8c8d; box-shadow: 0 3px 10px rgba(0,0,0,0.9); transition: all 0.5s;}
+        .node-label { background: rgba(0,0,0,0.9); padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; margin-top: 5px; border: 1px solid #7f8c8d; white-space: nowrap; pointer-events: none; }
+        .node.castle .node-icon { border: 3px solid var(--gold); background: rgba(241, 196, 15, 0.4); font-size: 35px; box-shadow: 0 0 20px var(--gold); width: 65px; height: 65px;}
 
-        .warning-sign { position: absolute; transform: translate(-50%, -50%); z-index: 8; background: rgba(0, 0, 0, 0.85); border: 1px solid #7f8c8d; border-left: 3px solid var(--red); color: #ecf0f1; padding: 6px; border-radius: 4px; font-size: 9px; font-weight: bold; text-align: center; width: 100px; box-shadow: 0 4px 10px rgba(0,0,0,0.8); pointer-events: none; }
-        .warning-sign span { display: block; color: var(--gold); font-size: 10px; margin-bottom: 3px; border-bottom: 1px solid #333; padding-bottom: 2px; }
+        /* PLACAS DE AVISO MENORES */
+        .warning-sign { position: absolute; transform: translate(-50%, -50%); z-index: 8; background: rgba(0, 0, 0, 0.85); border: 1px solid #7f8c8d; border-left: 3px solid var(--red); color: #ecf0f1; padding: 4px; border-radius: 4px; font-size: 8px; font-weight: bold; text-align: center; width: 85px; box-shadow: 0 4px 10px rgba(0,0,0,0.8); pointer-events: none; }
+        .warning-sign span { display: block; color: var(--gold); font-size: 9px; margin-bottom: 2px; border-bottom: 1px solid #333; padding-bottom: 2px; }
 
         .player-token { position: absolute; transform: translate(-50%, -100%); z-index: 15; transition: all 1.5s ease-in-out; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .player-token:hover { z-index: 50; }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-        .player-token .icon { font-size: 45px; background: #fff; width: 70px; height: 70px; border-radius: 50%; border: 4px solid var(--green); display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.9); animation: float 3s ease-in-out infinite; overflow: hidden; }
+        .player-token .icon { font-size: 45px; background: #fff; width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--green); display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 20px rgba(0,0,0,0.9); animation: float 3s ease-in-out infinite; overflow: hidden; }
         .player-token .icon img { width: 100%; height: 100%; object-fit: cover; }
-        .player-token .bubble { background: white; color: black; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 10px; border: 2px solid black; margin-bottom: 5px; white-space: nowrap; pointer-events: none; text-align: center;}
+        .player-token .bubble { background: white; color: black; font-size: 10px; font-weight: bold; padding: 3px 6px; border-radius: 8px; border: 2px solid black; margin-bottom: 5px; white-space: nowrap; pointer-events: none; text-align: center;}
 
         #tooltip { position: fixed; display: none; background: rgba(15, 20, 25, 0.95); border: 1px solid var(--gold); padding: 15px; border-radius: 8px; color: white; font-size: 13px; z-index: 1000; pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,0.9); min-width: 150px; }
         #tooltip h4 { color: var(--gold); margin-bottom: 5px; font-size: 14px;}
         #tooltip hr { border-color: #444; margin: 8px 0; }
         #loader { text-align:center; color: var(--gold); font-size: 11px; margin-top: 10px; font-weight: bold; background: #222; padding: 5px; border-radius: 5px; display: none;}
 
-        /* =========================================================
-           TELA DE COMEMORAÇÃO EXTREMA (SHOW DO MILHÃO)
-        ========================================================= */
+        /* TELA DE COMEMORAÇÃO EXTREMA (SHOW DO MILHÃO) */
         #level-up-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.85); z-index: 9999;
             display: none; flex-direction: column; justify-content: center; align-items: center;
             backdrop-filter: blur(8px);
         }
-        
         .level-up-avatar-container {
             font-size: 120px; background: #fff; width: 300px; height: 300px; border-radius: 50%;
             border: 15px solid var(--green); display: flex; justify-content: center; align-items: center;
             box-shadow: 0 0 100px rgba(46, 204, 113, 0.8), 0 20px 50px rgba(0,0,0,1); overflow: hidden;
         }
         .level-up-avatar-container img { width: 100%; height: 100%; object-fit: cover; }
-        
         .level-up-text {
             color: var(--gold); font-size: 40px; margin-top: 30px; text-transform: uppercase;
             font-weight: bold; text-shadow: 0 5px 15px rgba(0,0,0,1); text-align: center; max-width: 90%;
@@ -102,15 +101,17 @@
 </head>
 <body>
 
-    <!-- OVERLAY DE COMEMORAÇÃO (FICA INVISÍVEL ATÉ BATER 1K) -->
     <div id="level-up-overlay">
         <div id="level-up-icon" class="level-up-avatar-container"></div>
         <div id="level-up-name" class="level-up-text"></div>
     </div>
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="panel" style="flex: 1; display: flex; flex-direction: column;">
-            <h3>🎖️ Ranking do Dia</h3>
+            <h3 style="display: flex; justify-content: space-between; align-items: center;">
+                <span>🎖️ Ranking do Dia</span>
+                <span onclick="toggleSidebar()" style="cursor: pointer; background: #333; padding: 2px 8px; border-radius: 4px; color: #fff;" title="Ocultar Painel">✖</span>
+            </h3>
             <div id="avatar-list" style="overflow-y: auto; flex: 1; padding-right: 5px;"></div>
         </div>
 
@@ -122,30 +123,19 @@
             </div>
             <div id="loader"></div>
         </div>
-
-        <div class="controls">
-            <input type="text" id="nomeConsultor" placeholder="Nome do Vendedor">
-            <select id="avatarConsultor">
-                <option value="<img src='https://i.postimg.cc/8cnQDWzF/Whats-App-Image-2026-02-13-at-14-01-47.jpg'>">Foto Santos 📸</option>
-                <option value="🪖">Soldado 🪖</option>
-                <option value="🥷">Agente 🥷</option>
-                <option value="🚁">Piloto 🚁</option>
-                <option value="🛡️">Guerreiro 🛡️</option>
-            </select>
-            <input type="number" id="valorVenda" placeholder="R$ Valor Vendido">
-            <button onclick="registrarVenda()">Lançar Venda (Resgate)</button>
-        </div>
     </aside>
 
     <main class="map-viewport" id="viewport">
+        <button id="btn-show-sidebar" class="btn-toggle" onclick="toggleSidebar()">🏆 Ver Ranking</button>
+
         <div class="floating-banner" id="main-banner">
             <h1 id="banner-title">🔥 ZONA DE GUERRA (FASE 1)</h1>
-            <p>A cada 1.000 PTS = R$ 20,00 e Nova Fase!</p>
+            <p>A cada 2.000 PTS = R$ 20,00 e Nova Fase!</p>
         </div>
 
         <div class="map-content" id="map-content">
             <svg class="svg-path" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d="M 10 90 L 30 75 L 50 60 L 70 50 L 85 35 L 90 15" fill="transparent" stroke="#f39c12" stroke-width="1.5" stroke-dasharray="2, 2" vector-effect="non-scaling-stroke" opacity="0.6" />
+                <path id="map-path" d="" fill="transparent" stroke="#f39c12" stroke-width="1.2" stroke-dasharray="3, 3" vector-effect="non-scaling-stroke" opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
             </svg>
             <div id="nodes-container"></div>
         </div>
@@ -159,44 +149,109 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbx7pA6OD7MDhRbi6JROMXmV1zD5zPj-f48XBSIgfzXnS-NJUY5euexue_aOyXgpGjXc/exec"; 
     // =====================================================================
 
-    const TAMANHO_FASE = 1000;
-    const DATA_INICIO_TEMPORADA = new Date(2026, 4, 1);
+    const TAMANHO_FASE = 2000;
 
+    // 10 PLACAS DE AVISO ESPALHADAS
     const PLACAS_AVISO = [
-        { pts: 100, texto: "CORRE ATRÁS DE PROSPECTAR CLIENTES." },
-        { pts: 300, texto: "VC PRECISA MELHORAR SUAS TÉCNICAS DE FECHAMENTO!" },
-        { pts: 500, texto: "ESTUDE SOBRE CONTORNO DE OBJEÇÕES!" },
-        { pts: 900, texto: "FALTA POUCO... VAI DESISTIR AGORA?" }
+        { pts: 100, texto: "INÍCIO DA JORNADA! FOCO!" },
+        { pts: 300, texto: "PROSPECTE NOVOS CLIENTES!" },
+        { pts: 500, texto: "ACELERA AS VENDAS!" },
+        { pts: 700, texto: "MELHORE O FECHAMENTO!" },
+        { pts: 900, texto: "CONTORNO DE OBJEÇÕES!" },
+        { pts: 1100, texto: "METADE DO CAMINHO!" },
+        { pts: 1300, texto: "RESGATE CLIENTES ANTIGOS!" },
+        { pts: 1500, texto: "OFEREÇA ALTO VALOR!" },
+        { pts: 1700, texto: "NÃO DESISTA AGORA!" },
+        { pts: 1900, texto: "RUMO AO TOPO! VAI!" }
     ];
 
     const TEMAS = {
-        impar: { bg: "url('https://i.postimg.cc/Nfsx9QGF/paisagem-de-zona-de-guerra-com-destruicao-apocaliptica-23-2150985648.avif')", titulo: "🔥 ZONA DE GUERRA", nos: [ { pts: 0, icone: "⛺", nome: "BASE" }, { pts: 200, icone: "🪙", nome: "TRINCHEIRA" }, { pts: 400, icone: "💰", nome: "CAIXA FORTE" }, { pts: 600, icone: "🧳", nome: "MALETA" }, { pts: 800, icone: "💵", nome: "BUNKER" }, { pts: 1000, icone: "🚁", nome: "RESGATE (R$ 20)" } ] },
-        par: { bg: "url('https://i.postimg.cc/Qtfb8PL1/97b6b-9nhmeq.jpg')", titulo: "🏰 REINO MEDIEVAL", nos: [ { pts: 0, icone: "⛩️", nome: "ALDEIA" }, { pts: 200, icone: "🏆", nome: "MERCADO" }, { pts: 400, icone: "⛓️", nome: "MINA" }, { pts: 600, icone: "🐉", nome: "DRAGÃO" }, { pts: 800, icone: "🪙", nome: "TESOURO" }, { pts: 1000, icone: "👑", nome: "CONQUISTA (R$ 20)" } ] }
+        impar: { bg: "url('https://i.postimg.cc/Nfsx9QGF/paisagem-de-zona-de-guerra-com-destruicao-apocaliptica-23-2150985648.avif')", titulo: "🔥 ZONA DE GUERRA", nos: [ { pts: 0, icone: "⛺", nome: "BASE" }, { pts: 400, icone: "🪙", nome: "TRINCHEIRA" }, { pts: 800, icone: "💰", nome: "CAIXA FORTE" }, { pts: 1200, icone: "🧳", nome: "MALETA" }, { pts: 1600, icone: "💵", nome: "BUNKER" }, { pts: 2000, icone: "🚁", nome: "RESGATE (R$ 20)" } ] },
+        par: { bg: "url('https://i.postimg.cc/Qtfb8PL1/97b6b-9nhmeq.jpg')", titulo: "🏰 REINO MEDIEVAL", nos: [ { pts: 0, icone: "⛩️", nome: "ALDEIA" }, { pts: 400, icone: "🏆", nome: "MERCADO" }, { pts: 800, icone: "⛓️", nome: "MINA" }, { pts: 1200, icone: "🐉", nome: "DRAGÃO" }, { pts: 1600, icone: "🪙", nome: "TESOURO" }, { pts: 2000, icone: "👑", nome: "CONQUISTA (R$ 20)" } ] }
     };
 
-    const caminhoBase = [ { x: 10, y: 90 }, { x: 30, y: 75 }, { x: 50, y: 60 }, { x: 70, y: 50 }, { x: 85, y: 35 }, { x: 90, y: 15 } ];
+    // CAMINHO ORGÂNICO (MÃO LIVRE): 21 pontos em zigue-zague
+    const caminhoCurvo = [
+        { x: 5, y: 85 },   // 0 pts
+        { x: 10, y: 60 },  // 100 pts
+        { x: 18, y: 40 },  // 200 pts
+        { x: 25, y: 20 },  // 300 pts
+        { x: 35, y: 15 },  // 400 pts (NODE 1)
+        { x: 45, y: 25 },  // 500 pts
+        { x: 52, y: 45 },  // 600 pts
+        { x: 48, y: 65 },  // 700 pts 
+        { x: 55, y: 80 },  // 800 pts (NODE 2)
+        { x: 65, y: 85 },  // 900 pts
+        { x: 75, y: 70 },  // 1000 pts
+        { x: 82, y: 50 },  // 1100 pts
+        { x: 78, y: 30 },  // 1200 pts (NODE 3)
+        { x: 70, y: 15 },  // 1300 pts 
+        { x: 85, y: 10 },  // 1400 pts
+        { x: 95, y: 25 },  // 1500 pts
+        { x: 92, y: 45 },  // 1600 pts (NODE 4)
+        { x: 88, y: 65 },  // 1700 pts
+        { x: 82, y: 80 },  // 1800 pts
+        { x: 90, y: 90 },  // 1900 pts
+        { x: 95, y: 75 }   // 2000 pts (NODE 5 FINAL)
+    ];
 
     const mapaAvatares = {
-        "SANTOS": "<img src='https://i.postimg.cc/8cnQDWzF/Whats-App-Image-2026-02-13-at-14-01-47.jpg'>",
-        "SILVA": "🪖", "COSTA": "🥷", "LIMA": "🚁"
+        "ADRIANA VITORELLI": "<img src='https://i.postimg.cc/76hnvJrt/Whats_App_Image_2026_04_06_at_21_05_05_(1).jpg'>",
+        "PATRICIA": "<img src='https://i.postimg.cc/W3zwRqcH/Whats_App_Image_2026_04_06_at_21_05_05.jpg'>",
+        "RODRIGO": "<img src='https://i.postimg.cc/MTLbzZzs/Whats_App_Image_2026_04_06_at_21_05_04_(2).jpg'>",
+        "BEATRIZ": "<img src='https://i.postimg.cc/Qd84SV85/Whats-App-Image-2026-02-13-at-12-24-12.jpg'>",
+        "GEOVANNA": "<img src='https://i.postimg.cc/8cnQDWzF/Whats-App-Image-2026-02-13-at-14-01-47.jpg'>",
+        "CAROLINA": "<img src='https://i.postimg.cc/cC5yZYLv/Whats-App-Image-2026-02-13-at-13-58-55.jpg'>",
+        "DIENE": "<img src='https://i.postimg.cc/MKLsTCFq/Whats-App-Image-2026-02-13-at-11-02-41.jpg'>",
+        "BIANCA": "<img src='https://i.postimg.cc/SK9cysnH/Whats_App_Image_2026_02_13_at_11_16_23.jpg'>",
+        "VIVIANE": "<img src='https://i.postimg.cc/j5s2GdyV/Whats-App-Image-2026-02-13-at-11-19-43.jpg'>",
+        "GABRIELLY": "<img src='https://i.postimg.cc/MZfJzJ5R/Whats-App-Image-2026-02-13-at-11-12-49.jpg'>",
+        "SIMONE": "<img src='https://i.postimg.cc/gJqRZTqN/Whats-App-Image-2026-02-13-at-11-17-57.jpg'>",
+        "JÉSSICA": "<img src='https://i.postimg.cc/qRMn2Gbz/Whats-App-Image-2026-02-13-at-11-28-48.jpg'>",
+        "CAMILA INGRA": "<img src='https://i.postimg.cc/63qfs4xM/Whats_App_Image_2026_04_06_at_21_05_09.jpg'>",
+        "ANDERSON": "<img src='https://i.postimg.cc/DZ0PV43r/Whats_App_Image_2026_04_06_at_21_08_19.jpg'>",
+        "JOYCE": "<img src='https://i.postimg.cc/NMn7QGQP/Whats_App_Image_2026_04_06_at_21_05_05_(2).jpg'>",
+        "MILLENY": "<img src='https://i.postimg.cc/1tXrxV1H/Whats_App_Image_2026_04_06_at_21_05_09_(1).jpg'>",
+        "WEVERTON": "<img src='https://i.postimg.cc/SsP7mQmH/Whats_App_Image_2026_04_06_at_21_05_04.jpg'>",
+        "TIDIA": "<img src='https://i.postimg.cc/wBRdVfz9/Whats-App-Image-2026-05-12-at-16-30-30.jpg'>",
+        "ERONITA": "<img src='https://i.postimg.cc/dt6X29K3/Whats-App-Image-2026-05-11-at-12-18-33.jpg'>",
+        "THIFFANY": "<img src='https://i.postimg.cc/tJjy7h8w/Whats-App-Image-2026-05-12-at-16-11-28.jpg'>"
     };
 
     let jogadores = [];
     let faseExibicaoAtual = 1; 
     let maxFaseAlcancada = 1;
     let timerLoop = 0;
-    
-    // VARIÁVEIS DO GATILHO DA ANIMAÇÃO
-    let marcosAnteriores = {}; 
     let primeiroCarregamento = true;
+    let marcosAnteriores = {}; 
 
-    // --- CARREGAMENTO DE ÁUDIO COM PRE-LOAD ---
-    const somPalmas = new Audio('https://actions.google.com/sounds/v1/crowds/crowd_cheer.ogg');
-    const somAviao = new Audio('https://actions.google.com/sounds/v1/transportation/airplane_flyby.ogg');
-    somPalmas.volume = 0.6;
-    somAviao.volume = 1.0;
+    // --- FUNÇÃO PARA RECOLHER E ABRIR O PAINEL ---
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const btnShow = document.getElementById('btn-show-sidebar');
+        if (sidebar.classList.contains('collapsed')) {
+            sidebar.classList.remove('collapsed');
+            btnShow.style.display = 'none';
+        } else {
+            sidebar.classList.add('collapsed');
+            btnShow.style.display = 'block';
+        }
+    }
 
-    // --- TOOLTIP ---
+    const somPalmas = new Audio('https://assets.mixkit.co/active_storage/sfx/2018/2018-84.wav');
+    const somAviao = new Audio('https://assets.mixkit.co/active_storage/sfx/1435/1435-200.wav');
+    somPalmas.volume = 0.7;
+    somAviao.volume = 0.9;
+
+    function iniciarAtivacaoAudio() {
+        somPalmas.play().then(() => { somPalmas.pause(); somPalmas.currentTime = 0; }).catch(e => {});
+        somAviao.play().then(() => { somAviao.pause(); somAviao.currentTime = 0; }).catch(e => {});
+        document.removeEventListener('click', iniciarAtivacaoAudio);
+        document.removeEventListener('touchstart', iniciarAtivacaoAudio);
+    }
+    document.addEventListener('click', iniciarAtivacaoAudio);
+    document.addEventListener('touchstart', iniciarAtivacaoAudio);
+
     const tooltip = document.getElementById('tooltip');
     function showTooltip(e, titulo, descricao) {
         let safeDescricao = descricao.replace(/<img[^>]*>/g, "📸 Foto ");
@@ -206,52 +261,50 @@
     function hideTooltip() { tooltip.style.display = 'none'; }
     document.addEventListener('mousemove', (e) => { if(tooltip.style.display === 'block') { tooltip.style.left = (e.clientX + 15) + 'px'; tooltip.style.top = (e.clientY + 15) + 'px'; } });
 
+    // Matematica do Novo Caminho Orgânico
     function getPosicaoNoMapa(pontosNaFase) {
-        if (pontosNaFase <= 0) return { x: caminhoBase[0].x, y: caminhoBase[0].y };
-        if (pontosNaFase >= TAMANHO_FASE) return { x: caminhoBase[5].x, y: caminhoBase[5].y };
-        for (let i = 0; i < 5; i++) {
-            let atualPts = i * 200; let proxPts = (i+1) * 200;
+        let maxIndex = caminhoCurvo.length - 1;
+        if (pontosNaFase <= 0) return { x: caminhoCurvo[0].x, y: caminhoCurvo[0].y };
+        if (pontosNaFase >= TAMANHO_FASE) return { x: caminhoCurvo[maxIndex].x, y: caminhoCurvo[maxIndex].y };
+        
+        let step = TAMANHO_FASE / maxIndex; 
+
+        for (let i = 0; i < maxIndex; i++) {
+            let atualPts = i * step; 
+            let proxPts = (i+1) * step;
             if (pontosNaFase >= atualPts && pontosNaFase < proxPts) {
-                let perc = (pontosNaFase - atualPts) / 200;
-                return { x: caminhoBase[i].x + ((caminhoBase[i+1].x - caminhoBase[i].x) * perc), y: caminhoBase[i].y + ((caminhoBase[i+1].y - caminhoBase[i].y) * perc) };
+                let perc = (pontosNaFase - atualPts) / step;
+                return { x: caminhoCurvo[i].x + ((caminhoCurvo[i+1].x - caminhoCurvo[i].x) * perc), y: caminhoCurvo[i].y + ((caminhoCurvo[i+1].y - caminhoCurvo[i].y) * perc) };
             }
         }
     }
 
-    // --- FUNÇÃO DO SHOW DO MILHÃO (EXPLOSÃO E VOO) ---
     function dispararAnimacaoAvanco(jogador) {
         const overlay = document.getElementById('level-up-overlay');
         const iconContainer = document.getElementById('level-up-icon');
         const textContainer = document.getElementById('level-up-name');
 
-        // Reseta fisicamente as animações do CSS para garantir que rodem do zero
         iconContainer.style.animation = 'none';
         textContainer.style.animation = 'none';
         overlay.style.display = 'none';
-        overlay.offsetHeight; /* Força o navegador a recalcular a tela */
+        overlay.offsetHeight; 
 
-        // Preenche com os dados de quem bateu a meta
         iconContainer.innerHTML = jogador.avatar;
-        textContainer.innerHTML = `${jogador.nome} BATEU 1K E AVANÇOU!<br>🎉 R$ 20 GARANTIDO!`;
+        textContainer.innerHTML = `${jogador.nome} BATEU 2K E AVANÇOU!<br>🎉 R$ 20 GARANTIDO!`;
         
-        // Exibe a tela preta e adiciona o efeito de animação nas tags
         overlay.style.display = 'flex';
         iconContainer.style.animation = 'decolagemAviator 5s forwards cubic-bezier(0.25, 1, 0.5, 1)';
         textContainer.style.animation = 'fadeIn 1s forwards';
 
-        // Toca os sons (com .catch para ignorar se o navegador bloquear o áudio)
         somPalmas.currentTime = 0;
-        somPalmas.play().catch(e => console.log('Áudio palmas bloqueado pelo navegador', e));
+        somPalmas.play().catch(e => console.log('Áudio aguardando clique.', e));
 
         setTimeout(() => {
             somAviao.currentTime = 0;
-            somAviao.play().catch(e => console.log('Áudio avião bloqueado pelo navegador', e));
-        }, 1500);
+            somAviao.play().catch(e => console.log('Áudio aguardando clique.', e));
+        }, 1200);
 
-        // Desliga a tela preta depois que o avião sai voando
-        setTimeout(() => {
-            overlay.style.display = 'none';
-        }, 5500);
+        setTimeout(() => { overlay.style.display = 'none'; }, 5500);
     }
 
     async function carregarDadosDoServidor() {
@@ -261,16 +314,15 @@
         if(API_URL === "SUA_URL_AQUI" || API_URL.trim() === "") {
             loader.className = 'error-msg'; loader.innerText = "COLE SUA API_URL NO CÓDIGO!";
             
-            // DADOS DE TESTE 
             jogadores = [
-                { nome: "SILVA", avatar: "🪖", pontosTotais: 350 }, 
-                { nome: "SANTOS", avatar: mapaAvatares["SANTOS"], pontosTotais: 950 } // Está com 950. Lance +50 para testar a explosão!
+                { nome: "SILVA", avatar: "🪖", pontosTotais: 750 }, 
+                { nome: "ADRIANA VITORELLI", avatar: mapaAvatares["ADRIANA VITORELLI"], pontosTotais: 1950 }
             ];
             processarEstatisticasEquipe();
             return;
         }
 
-        loader.className = ''; loader.innerText = "Carregando vendas de hoje...";
+        loader.className = ''; loader.innerText = "Sincronizando placar...";
         
         try {
             const response = await fetch(API_URL);
@@ -331,21 +383,17 @@
     function processarEstatisticasEquipe() {
         maxFaseAlcancada = 1;
         jogadores.forEach(jog => {
-            // A fase matemática para posicionar (1000 = fase 1)
             let f = Math.floor(Math.max(0, jog.pontosTotais - 0.01) / TAMANHO_FASE) + 1;
             jog.fase = f;
             jog.pontosNaFaseAtual = jog.pontosTotais - ((f - 1) * TAMANHO_FASE);
             if(f > maxFaseAlcancada) maxFaseAlcancada = f;
 
-            // O Gatilho da Animação: Quantas vezes exatas ele bateu os múltiplos de 1000?
             let marcosBateu = Math.floor(jog.pontosTotais / TAMANHO_FASE); 
             
-            // Dispara a explosão somente se ele passou para um marco novo agora e não é o 1º carregamento
             if(!primeiroCarregamento && marcosAnteriores[jog.nome] !== undefined && marcosBateu > marcosAnteriores[jog.nome]) {
                 dispararAnimacaoAvanco(jog);
             }
             
-            // Atualiza a memória
             marcosAnteriores[jog.nome] = marcosBateu;
         });
 
@@ -363,8 +411,6 @@
         jogadores.sort((a,b) => b.pontosTotais - a.pontosTotais).forEach(jog => {
             equipeTotal += jog.pontosTotais;
             let progressoPercent = Math.min((jog.pontosNaFaseAtual / TAMANHO_FASE) * 100, 100);
-            
-            // Calcula o dinheiro real: quantas vezes completas (múltiplos de 1000) ele bateu
             let recompensasPagas = Math.floor(jog.pontosTotais / TAMANHO_FASE) * 20;
 
             lista.innerHTML += `
@@ -388,13 +434,17 @@
         containerNos.innerHTML = ''; 
         document.querySelectorAll('.player-token').forEach(el => el.remove()); 
 
+        // DESENHA A LINHA CURVA DO MAPA AUTOMATICAMENTE
+        const pathString = "M " + caminhoCurvo.map(p => p.x + " " + p.y).join(" L ");
+        document.getElementById('map-path').setAttribute("d", pathString);
+
         const tema = (faseExibicaoAtual % 2 === 0) ? TEMAS.par : TEMAS.impar;
         mapContent.style.backgroundImage = tema.bg;
         document.getElementById('banner-title').innerText = `${tema.titulo} (FASE ${faseExibicaoAtual})`;
 
-        // Desenha Marcos Principais
+        // RENDERIZA AS BASES PRINCIPAIS BASEADAS NOS INDICES (0, 4, 8, 12, 16, 20)
         tema.nos.forEach((noConfig, index) => {
-            const pos = caminhoBase[index];
+            const pos = caminhoCurvo[index * 4];
             const isCastle = index === 5; 
             const el = document.createElement('div');
             el.className = `node unlocked ${isCastle ? 'castle' : ''}`;
@@ -403,7 +453,7 @@
             containerNos.appendChild(el);
         });
 
-        // Desenha Placas
+        // RENDERIZA AS PLACAS DE AVISO (ESPALHADAS)
         PLACAS_AVISO.forEach(placa => {
             const pos = getPosicaoNoMapa(placa.pts);
             const el = document.createElement('div');
@@ -413,7 +463,7 @@
             containerNos.appendChild(el);
         });
 
-        // Desenha Jogadores
+        // RENDERIZA OS AVATARES NA TRILHA CURVA
         jogadores.forEach(jog => {
             if(jog.fase !== faseExibicaoAtual) return;
             let pos = getPosicaoNoMapa(jog.pontosNaFaseAtual);
@@ -443,41 +493,11 @@
             faseExibicaoAtual = 1; document.getElementById('screen-timer').style.width = '100%';
         }
     }
+    
+    // GATILHOS DE ATUALIZAÇÃO
     setInterval(loopTelas, 1000); 
+    setInterval(carregarDadosDoServidor, 60000); // RECARREGA OS DADOS AUTOMATICAMENTE A CADA 1 MINUTO
 
-    async function registrarVenda() {
-        const nome = document.getElementById('nomeConsultor').value.toUpperCase().trim();
-        const avatar = document.getElementById('avatarConsultor').value;
-        const valor = parseFloat(document.getElementById('valorVenda').value);
-
-        if (!nome || isNaN(valor) || valor <= 0) { alert("Preencha o nome e um valor válido!"); return; }
-
-        mapaAvatares[nome] = avatar;
-        
-        // MOCK DE TESTE PARA ANIMAÇÃO SE ESTIVER SEM API
-        if(API_URL === "SUA_URL_AQUI") { 
-            let j = jogadores.find(x => x.nome === nome);
-            if(j) j.pontosTotais += valor;
-            else jogadores.push({nome: nome, avatar: avatar, pontosTotais: valor});
-            
-            document.getElementById('valorVenda').value = '';
-            processarEstatisticasEquipe();
-            return; 
-        }
-
-        const loader = document.getElementById('loader');
-        loader.style.display = 'block';
-        loader.innerText = "Salvando...";
-        try {
-            await fetch(API_URL, { method: "POST", body: JSON.stringify({ vendedor: nome, valor: valor }) });
-            document.getElementById('valorVenda').value = '';
-            carregarDadosDoServidor(); 
-        } catch(e) {
-            alert("Erro ao gravar venda.");
-        }
-    }
-
-    // Inicialização
     window.onload = () => {
         renderizarMapaAtual(); 
         carregarDadosDoServidor(); 
